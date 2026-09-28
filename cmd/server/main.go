@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/Anshul563/media-engine/internal/config"
+	"github.com/Anshul563/media-engine/internal/database"
 	"github.com/Anshul563/media-engine/internal/logger"
 )
 
@@ -38,10 +39,22 @@ func main() {
 		}
 	})
 
+	db, err := database.NewPostgresPool(cfg.Database.URL)
+	if err != nil {
+		slog.Error(
+			"failed to connect to database",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+
+	defer db.Close()
+
 	addr := fmt.Sprintf(":%d", cfg.App.Port)
 
 	slog.Info(
 		"media engine starting",
+		"database", "connected",
 		"name", cfg.App.Name,
 		"environment", cfg.App.Env,
 		"address", addr,

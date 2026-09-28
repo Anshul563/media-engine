@@ -7,6 +7,7 @@ import (
 
 type Config struct {
 	App AppConfig
+	Database DatabaseConfig
 }
 
 type AppConfig struct {
@@ -15,12 +16,20 @@ type AppConfig struct {
 	Port int
 }
 
+type DatabaseConfig struct {
+	URL string
+}
+
 func Load() Config {
 	return Config{
 		App: AppConfig{
 			Name: getEnv("APP_NAME", "media-engine"),
 			Env:  getEnv("APP_ENV", "development"),
 			Port: getEnvInt("APP_PORT", 8080),
+		},
+
+		Database: DatabaseConfig{
+			URL: getEnv("DATABASE_URL", ""),
 		},
 	}
 }
