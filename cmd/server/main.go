@@ -1,11 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/Anshul563/media-engine/internal/config"
 )
 
 func main() {
+	cfg := config.Load()
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
@@ -14,9 +19,14 @@ func main() {
 		w.Write([]byte(`{"status":"ok"}`))
 	})
 
-	addr := ":8080"
+	addr := fmt.Sprintf(":%d", cfg.App.Port)
 
-	log.Printf("Media Engine running on http://localhost%s", addr)
+	log.Printf(
+		"%s running in %s mode on http://localhost%s",
+		cfg.App.Name,
+		cfg.App.Env,
+		addr,
+	)
 
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatal(err)
